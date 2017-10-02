@@ -1,0 +1,3 @@
+exports.exportPathMap = () => {
+  return { "/": { page: "/" } };
+};
