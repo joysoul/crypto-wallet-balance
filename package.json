@@ -1,5 +1,5 @@
 {
-  "name": "wallet-next",
+  "name": "crypto-wallet-balance",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,9 +7,9 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "deploy": "npm run build && next export && cd out && now"
+    "deploy": "npm run build && next export && cd out && now --public"
   },
-  "author": "Oskar Hane",
+  "author": "Oskar Hane <oh@oskarhane.com>",
   "license": "ISC",
   "dependencies": {
     "next": "^4.0.0-beta.2",

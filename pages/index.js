@@ -1,15 +1,14 @@
 import React, { Component } from "react";
 import Head from "next/head";
-import {
-  Image,
-  Select,
-  Input,
-  Button,
-  List,
-  Grid,
-  Divider
-} from "semantic-ui-react";
+import { Image, List, Grid, Divider } from "semantic-ui-react";
 import { Bitcoin, Ethereum } from "../components/CoinTypes";
+import Exchange from "../components/Exchange";
+import {
+  DeleteButton,
+  CurrencyPicker,
+  AddressAdder,
+  Icon
+} from "../components/UIBits";
 
 const outputCurrencies = [
   { key: "SEK", value: "SEK", flag: "se", text: "SEK" },
@@ -47,6 +46,12 @@ class App extends Component {
     this.setState({ addresses, inputAddress: "" });
     localStorage.setItem("addresses", JSON.stringify(addresses));
   };
+  deleteAddress = address => {
+    const lsAddresses = JSON.parse(localStorage.getItem("addresses")) || [];
+    const addresses = lsAddresses.filter(ad => address !== ad.address);
+    this.setState({ addresses });
+    localStorage.setItem("addresses", JSON.stringify(addresses));
+  };
   handleAddressTypeRef = c => (this.addressTypeRef = c);
   componentDidMount() {
     const addresses = JSON.parse(localStorage.getItem("addresses")) || [];
@@ -69,45 +74,51 @@ class App extends Component {
             href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css"
           />
         </Head>
-        <Grid padded centered>
+        <Grid centered>
           <Grid.Row>
             <Grid.Column mobile={16} tablet={12} computer={8}>
               <Image src="/static/images/header.png" />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column mobile={8} tablet={16} computer={8}>
-              <List
-                divided
-                relaxed
-                style={{ textAlign: "left", overflow: "hidden" }}
-              >
+            <Grid.Column mobile={12} tablet={8} computer={8}>
+              <List divided relaxed style={{ textAlign: "left" }}>
                 {addresses.map(address => {
                   const C = address.type === "BTC" ? Bitcoin : Ethereum;
-                  const Icon =
-                    address.type === "BTC"
-                      ? () => (
-                          <List.Icon
-                            name="bitcoin"
-                            size="large"
-                            verticalAlign="middle"
-                          />
-                        )
-                      : () => <i className="small icon middle aligned">ETH</i>;
                   return (
-                    <List.Item key={address.address}>
-                      <Icon />
-                      <List.Content>
-                        <C
-                          address={address.address}
-                          currency={currency}
-                          render={res => <List.Header>{res}</List.Header>}
-                        />
-                        <List.Description as="i" className="tiny icon">
-                          {address.address}
-                        </List.Description>
-                      </List.Content>
-                    </List.Item>
+                    <C
+                      key={address.address}
+                      currency={currency}
+                      address={address.address}
+                      render={({ pending, error, sum, units }) => (
+                        <List.Item>
+                          <List.Content floated="right">
+                            <DeleteButton
+                              onDelete={() =>
+                                this.deleteAddress(address.address)}
+                            />
+                          </List.Content>
+                          <List.Content floated="right">
+                            {units ? (
+                              <Exchange
+                                from={address.type}
+                                to={currency}
+                                sum={units}
+                              />
+                            ) : (
+                              "-"
+                            )}
+                          </List.Content>
+                          <Icon type={address.type} />
+                          <List.Content>
+                            {pending ? "pending" : error ? error : units}
+                            <List.Description as="i" className="tiny icon">
+                              {address.address}
+                            </List.Description>
+                          </List.Content>
+                        </List.Item>
+                      )}
+                    />
                   );
                 })}
               </List>
@@ -115,39 +126,24 @@ class App extends Component {
           </Grid.Row>
           <Divider />
           <Grid.Row>
-            <Grid.Column mobile={8} tablet={16} computer={8}>
-              Pick output currency<br />
-              <Select
-                placeholder="Select output currency"
-                options={outputCurrencies}
-                onChange={this.updateCurrency}
-                defaultValue={"SEK"}
+            <Grid.Column mobile={12} tablet={12} computer={8}>
+              <CurrencyPicker
+                defaultValue="SEK"
+                outputCurrencies={outputCurrencies}
+                onCurrencyChange={this.updateCurrency}
               />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column mobile={8} tablet={16} computer={8}>
-              Add wallet address to watch<br />
-              <Select
-                placeholder="Select address type"
-                options={addressTypes}
-                onChange={this.updateAddressType}
-                defaultValue={""}
+            <Grid.Column mobile={12} tablet={12} computer={8}>
+              <AddressAdder
+                addressTypes={addressTypes}
+                onAddressAdd={this.watchAddress}
+                selectedAddressType={selectedAddressType}
+                onAddressTypeChange={this.updateAddressType}
+                onInputAddressChange={this.updateInputAddress}
+                inputAddress={inputAddress}
               />
-              <br />
-              <br />
-              <Input
-                onChange={this.updateInputAddress}
-                placeholder="Enter address"
-                value={inputAddress}
-              />
-              <Button
-                onClick={this.watchAddress}
-                primary
-                disabled={!(inputAddress && selectedAddressType)}
-              >
-                Watch address
-              </Button>
             </Grid.Column>
           </Grid.Row>
         </Grid>

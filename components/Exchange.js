@@ -8,7 +8,13 @@ const Exchange = ({ from, to, sum = 1 }) => (
     render={({ pending, error, res }) => {
       return pending
         ? "pending"
-        : error ? error : res ? `${Math.round(res[to] * sum)} ${to}` : "wait";
+        : error
+          ? error
+          : res
+            ? `${Number(Math.round(res[to] * sum)).toLocaleString(
+                "sv-SE"
+              )} ${to}`
+            : "wait";
     }}
   />
 );
