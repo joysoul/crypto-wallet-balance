@@ -23,19 +23,19 @@ class Fetch extends Component {
     if (this.state.blocking) return;
     this.setState({ pending: true, error: false, res: null }, () => {
       const req = new Request(
-        this.props.url,
-        this.props.init || { method: "GET", mode: "cors" }
+        props.url,
+        props.init || { method: "GET", mode: "cors" }
       );
       fetch(req)
         .then(response => {
-          this.setupThrottling(this.props.throttleTime);
+          this.setupThrottling(props.throttleTime);
           if (response.status === 200 && response.status < 340) {
             return response;
           } else {
             throw new Error(response.statusText);
           }
         })
-        .then(this.props.handleRes)
+        .then(props.handleRes)
         .then(res => this.setState({ pending: false, res }))
         .catch(error => {
           this.setState({ pending: false, error: error.message });
