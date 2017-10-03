@@ -13,6 +13,7 @@ export class Bitcoin extends Component {
     return (
       <Fetch
         url={`https://blockchain.info/q/addressbalance/${address}`}
+        throttleTime={10}
         init={{ method: "GET", mode: "cors" }}
         handleRes={res => res.text()}
         render={({ pending, error, res }) =>
@@ -34,6 +35,7 @@ export class Ethereum extends Component {
     return (
       <Fetch
         url={`https://api.blockcypher.com/v1/eth/main/addrs/${address}/balance`}
+        throttleTime={10}
         init={{ method: "GET", mode: "cors" }}
         handleRes={res => res.json()}
         render={({ pending, error, res }) =>

@@ -4,7 +4,8 @@ class Fetch extends Component {
   state = {
     res: null,
     pending: false,
-    error: false
+    error: false,
+    blocking: false
   };
   componentDidMount() {
     this.fetch(this.props);
@@ -12,8 +13,14 @@ class Fetch extends Component {
   componentWillReceiveProps(props) {
     this.fetch(props);
   }
+  setupThrottling(time) {
+    if (!time) return;
+    this.setState({ blocking: true });
+    setTimeout(() => this.setState({ blocking: false }), time * 1000);
+  }
   fetch(props) {
     if (this.state.pending) return;
+    if (this.state.blocking) return;
     this.setState({ pending: true, error: false, res: null }, () => {
       const req = new Request(
         this.props.url,
@@ -21,6 +28,7 @@ class Fetch extends Component {
       );
       fetch(req)
         .then(response => {
+          this.setupThrottling(this.props.throttleTime);
           if (response.status === 200 && response.status < 340) {
             return response;
           } else {
@@ -29,9 +37,9 @@ class Fetch extends Component {
         })
         .then(this.props.handleRes)
         .then(res => this.setState({ pending: false, res }))
-        .catch(error =>
-          this.setState({ pending: false, error: error.message })
-        );
+        .catch(error => {
+          this.setState({ pending: false, error: error.message });
+        });
     });
   }
   render() {
