@@ -88,7 +88,6 @@ class App extends Component {
                   return (
                     <C
                       key={address.address}
-                      currency={currency}
                       address={address.address}
                       render={({ pending, error, sum, units }) => (
                         <List.Item>
