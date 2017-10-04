@@ -89,6 +89,7 @@ class App extends Component {
                     <C
                       key={address.address}
                       address={address.address}
+                      currency={currency}
                       render={({ pending, error, sum, units }) => (
                         <List.Item>
                           <List.Content floated="right">

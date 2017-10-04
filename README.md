@@ -11,7 +11,7 @@ Your web browser does the communication with API:s to get the addresses balances
 This is not a wallet. You cannot create transactions or addresses here. This is just a simple app to keep track of wallets balancies.
 
 ## Demo
-Go to https://out-fkofqpbovh.now.sh see the latest release.  
+Go to https://out-dujwtsnfeh.now.sh see the latest release.  
 Add some addresses to keep track of them.
 
 ## Dev environment setup
